@@ -1,14 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
-import {
-  ButtonStyleTypes,
-  InteractionResponseFlags,
-  InteractionResponseType,
-  InteractionType,
-  MessageComponentTypes,
-  verifyKeyMiddleware,
-} from 'discord-interactions';
-import { getRandomEmoji, DiscordRequest } from './utils.js';
+import {InteractionResponseType, InteractionType, verifyKeyMiddleware,} from 'discord-interactions';
+import {DiscordRequest, getJSON, getRandomEmoji} from './utils.js';
 
 // Create an express app
 const app = express();
@@ -45,6 +38,63 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
         data: {
           // Fetches a random emoji to send from a helper function
           content: `hello world ${getRandomEmoji()}`,
+        },
+      });
+    }
+
+    // /part <id>
+    // Look up a part by its Lego ID
+    if (name === "part") {
+      // Get the id
+      const partID = req.body.data.options[0].value;
+
+      // Send a loading message
+      await res.send({
+        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: `Loading part #${partID}...`,
+        }
+      });
+
+      const loadingMessage = `webhooks/${process.env.APP_ID}/${req.body.token}/messages/@original`;
+
+      // Fetch data from Rebrickable
+      let partJSON;
+      try {
+        partJSON = await getJSON(`https://rebrickable.com/api/v3/lego/parts/${partID}/?key=${process.env.REBRICKABLE_KEY}`);
+      } catch (error) {
+        console.error(`Rebrickable API request failed: ${error.message}`);
+        return DiscordRequest(loadingMessage, {
+          method: "PATCH",
+          body: {
+            content: `:warning: Rebrickable API request failed: ${error.message}`,
+          },
+        });
+      }
+
+      // If Rebrickable gave us an error, show it instead.
+      if (partJSON.detail) {
+        return DiscordRequest(loadingMessage, {
+          method: "PATCH",
+          body: {
+            content: `:warning: Unable to get part '${partID}': ${partJSON.detail}`,
+          },
+        });
+      }
+
+      // Send completed message
+      return DiscordRequest(`webhooks/${process.env.APP_ID}/${req.body.token}`, {
+        method: "POST",
+        body: {
+          embeds: [{
+            title: `Part ${partJSON.part_num}: ${partJSON.name}`,
+            description: `
+- [BrickLink](<https://www.bricklink.com/v2/catalog/catalogitem.page?P=${partJSON.external_ids['BrickLink']}>)
+- [Rebrickable](<${partJSON.part_url}>)`,
+            image: {
+              url: partJSON.part_img_url
+            }
+          }]
         },
       });
     }
