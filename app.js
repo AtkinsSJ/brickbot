@@ -107,18 +107,19 @@ ${minifigJSON.num_parts} parts
         await sendLoadingMessage(`Loading part #${partID}...`);
 
         // Fetch data from Rebrickable
-        let partJSON;
+        let partsJSON;
         try {
-          partJSON = await getJSON(`https://rebrickable.com/api/v3/lego/parts/${partID}/?key=${process.env.REBRICKABLE_KEY}`);
+          partsJSON = await getJSON(`https://rebrickable.com/api/v3/lego/parts/?key=${process.env.REBRICKABLE_KEY}&lego_id=${partID}&inc_part_details=1`);
         } catch (error) {
           console.error(`Rebrickable API request failed: ${error.message}`);
           return replaceLoadingMessage(`:warning: Rebrickable API request failed: ${error.message}`);
         }
 
-        // If Rebrickable gave us an error, show it instead.
-        if (partJSON.detail) {
-          return replaceLoadingMessage(`:warning: Unable to get part '${partID}': ${partJSON.detail}`);
+        if (partsJSON.count == 0) {
+          return replaceLoadingMessage(`No results found for '${partID}'`);
         }
+
+        const partJSON = partsJSON.results[0];
 
         // Send completed message
         const printCount = partJSON.prints?.length || 0;
