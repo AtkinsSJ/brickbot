@@ -57,6 +57,46 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
       });
     }
 
+    // /minifig <id>
+    // Look up a minifig by its Rebrickable ID
+    if (name === "minifig") {
+      let minifigID = req.body.data.options[0].value;
+
+      // The format for these names is "fig-000657", so if we just got a number, make it match that
+      if (/^\d+$/.test(minifigID)) {
+        minifigID = "fig-" + '0'.repeat(Math.max(6 - minifigID.length, 0)) + minifigID;
+      }
+
+      await sendLoadingMessage(`Loading minifig #${minifigID}...`);
+
+      // Fetch data from Rebrickable
+      let minifigJSON;
+      try {
+        minifigJSON = await getJSON(`https://rebrickable.com/api/v3/lego/minifigs/${minifigID}/?key=${process.env.REBRICKABLE_KEY}`);
+      } catch (error) {
+        console.error(`Rebrickable API request failed: ${error.message}`);
+        return replaceLoadingMessage(`:warning: Rebrickable API request failed: ${error.message}`);
+      }
+
+      // If Rebrickable gave us an error, show it instead.
+      if (minifigJSON.detail) {
+        return replaceLoadingMessage(`:warning: Unable to get minifig '${minifigID}': ${minifigJSON.detail}`);
+      }
+
+      // Send completed message
+      return sendResultMessage({
+        embeds: [{
+          title: `${minifigJSON.name}`,
+          description: `
+${minifigJSON.num_parts} parts
+[View on Rebrickable](<${minifigJSON.set_url}>)`,
+          image: {
+            url: minifigJSON.set_img_url,
+          },
+        }],
+      });
+    }
+
     // /part <id>
     // Look up a part by its Lego ID
     if (name === "part") {
