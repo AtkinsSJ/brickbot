@@ -1,14 +1,5 @@
 import 'dotenv/config';
-import {capitalize, InstallGlobalCommands} from './utils.js';
-
-// Simple test command
-const TEST_COMMAND = {
-  name: 'test',
-  description: 'Basic command',
-  type: 1,
-  integration_types: [0, 1],
-  contexts: [0, 1, 2],
-};
+import {InstallGlobalCommands} from './utils.js';
 
 const PART_COMMAND = {
   name: "part",
@@ -25,6 +16,6 @@ const PART_COMMAND = {
   type: 1,
 };
 
-const ALL_COMMANDS = [TEST_COMMAND, PART_COMMAND];
+const ALL_COMMANDS = [PART_COMMAND];
 
 InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
