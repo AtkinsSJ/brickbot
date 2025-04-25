@@ -87,6 +87,68 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
       });
     }
 
+    // /set <id>
+    // Look up a set by its Lego ID
+    if (name === "set") {
+      // Get the id
+      let setID = req.body.data.options[0].value;
+
+      // Rebrickable set IDs always have a dash and a number at the end. If we don't have one, add `-1`.
+      if (!setID.includes('-'))
+        setID += "-1";
+
+      // Send a loading message
+      await res.send({
+        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: `Loading set #${setID}...`,
+        }
+      });
+
+      const loadingMessage = `webhooks/${process.env.APP_ID}/${req.body.token}/messages/@original`;
+
+      // Fetch data from Rebrickable
+      let setJSON;
+      try {
+        setJSON = await getJSON(`https://rebrickable.com/api/v3/lego/sets/${setID}/?key=${process.env.REBRICKABLE_KEY}`);
+      } catch (error) {
+        console.error(`Rebrickable API request failed: ${error.message}`);
+        return DiscordRequest(loadingMessage, {
+          method: "PATCH",
+          body: {
+            content: `:warning: Rebrickable API request failed: ${error.message}`,
+          },
+        });
+      }
+
+      // If Rebrickable gave us an error, show it instead.
+      if (setJSON.detail) {
+        return DiscordRequest(loadingMessage, {
+          method: "PATCH",
+          body: {
+            content: `:warning: Unable to get set '${setID}': ${setJSON.detail}`,
+          },
+        });
+      }
+
+      // Send completed message
+      return DiscordRequest(`webhooks/${process.env.APP_ID}/${req.body.token}`, {
+        method: "POST",
+        body: {
+          embeds: [{
+            title: `${setJSON.name} (${setJSON.set_num})`,
+            description: `
+Released in ${setJSON.year}
+${setJSON.num_parts} parts
+[View on Rebrickable](<${setJSON.set_url}>)`,
+            image: {
+              url: setJSON.set_img_url,
+            }
+          }]
+        },
+      });
+    }
+
     console.error(`unknown command: ${name}`);
     return res.status(400).json({ error: 'unknown command' });
   }
