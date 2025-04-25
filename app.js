@@ -30,21 +30,40 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
   if (type === InteractionType.APPLICATION_COMMAND) {
     const { name } = data;
 
+    async function sendLoadingMessage(text) {
+      return res.send({
+        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: text,
+        }
+      });
+    }
+
+    const LOADING_MESSAGE_URL = `webhooks/${process.env.APP_ID}/${req.body.token}/messages/@original`;
+
+    async function replaceLoadingMessage(text) {
+      return DiscordRequest(LOADING_MESSAGE_URL, {
+        method: "PATCH",
+        body: {
+          content: text,
+        },
+      });
+    }
+
+    async function sendResultMessage(messageBody) {
+      return DiscordRequest(`webhooks/${process.env.APP_ID}/${req.body.token}`, {
+        method: "POST",
+        body: messageBody,
+      });
+    }
+
     // /part <id>
     // Look up a part by its Lego ID
     if (name === "part") {
       // Get the id
       const partID = req.body.data.options[0].value;
 
-      // Send a loading message
-      await res.send({
-        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          content: `Loading part #${partID}...`,
-        }
-      });
-
-      const loadingMessage = `webhooks/${process.env.APP_ID}/${req.body.token}/messages/@original`;
+      await sendLoadingMessage(`Loading part #${partID}...`);
 
       // Fetch data from Rebrickable
       let partJSON;
@@ -52,38 +71,25 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
         partJSON = await getJSON(`https://rebrickable.com/api/v3/lego/parts/${partID}/?key=${process.env.REBRICKABLE_KEY}`);
       } catch (error) {
         console.error(`Rebrickable API request failed: ${error.message}`);
-        return DiscordRequest(loadingMessage, {
-          method: "PATCH",
-          body: {
-            content: `:warning: Rebrickable API request failed: ${error.message}`,
-          },
-        });
+        return replaceLoadingMessage(`:warning: Rebrickable API request failed: ${error.message}`);
       }
 
       // If Rebrickable gave us an error, show it instead.
       if (partJSON.detail) {
-        return DiscordRequest(loadingMessage, {
-          method: "PATCH",
-          body: {
-            content: `:warning: Unable to get part '${partID}': ${partJSON.detail}`,
-          },
-        });
+        return replaceLoadingMessage(`:warning: Unable to get part '${partID}': ${partJSON.detail}`);
       }
 
       // Send completed message
-      return DiscordRequest(`webhooks/${process.env.APP_ID}/${req.body.token}`, {
-        method: "POST",
-        body: {
-          embeds: [{
-            title: `Part ${partJSON.part_num}: ${partJSON.name}`,
-            description: `
+      return sendResultMessage({
+        embeds: [{
+          title: `Part ${partJSON.part_num}: ${partJSON.name}`,
+          description: `
 - [BrickLink](<https://www.bricklink.com/v2/catalog/catalogitem.page?P=${partJSON.external_ids['BrickLink']}>)
 - [Rebrickable](<${partJSON.part_url}>)`,
-            image: {
-              url: partJSON.part_img_url
-            }
-          }]
-        },
+          image: {
+            url: partJSON.part_img_url
+          }
+        }]
       });
     }
 
@@ -94,18 +100,11 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
       let setID = req.body.data.options[0].value;
 
       // Rebrickable set IDs always have a dash and a number at the end. If we don't have one, add `-1`.
-      if (!setID.includes('-'))
+      if (!setID.includes('-')) {
         setID += "-1";
+      }
 
-      // Send a loading message
-      await res.send({
-        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          content: `Loading set #${setID}...`,
-        }
-      });
-
-      const loadingMessage = `webhooks/${process.env.APP_ID}/${req.body.token}/messages/@original`;
+      await sendLoadingMessage(`Loading set #${setID}...`);
 
       // Fetch data from Rebrickable
       let setJSON;
@@ -113,39 +112,26 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
         setJSON = await getJSON(`https://rebrickable.com/api/v3/lego/sets/${setID}/?key=${process.env.REBRICKABLE_KEY}`);
       } catch (error) {
         console.error(`Rebrickable API request failed: ${error.message}`);
-        return DiscordRequest(loadingMessage, {
-          method: "PATCH",
-          body: {
-            content: `:warning: Rebrickable API request failed: ${error.message}`,
-          },
-        });
+        return replaceLoadingMessage(`:warning: Rebrickable API request failed: ${error.message}`);
       }
 
       // If Rebrickable gave us an error, show it instead.
       if (setJSON.detail) {
-        return DiscordRequest(loadingMessage, {
-          method: "PATCH",
-          body: {
-            content: `:warning: Unable to get set '${setID}': ${setJSON.detail}`,
-          },
-        });
+        return replaceLoadingMessage(`:warning: Unable to get set '${setID}': ${setJSON.detail}`);
       }
 
       // Send completed message
-      return DiscordRequest(`webhooks/${process.env.APP_ID}/${req.body.token}`, {
-        method: "POST",
-        body: {
-          embeds: [{
-            title: `${setJSON.name} (${setJSON.set_num})`,
-            description: `
+      return sendResultMessage({
+        embeds: [{
+          title: `${setJSON.name} (${setJSON.set_num})`,
+          description: `
 Released in ${setJSON.year}
 ${setJSON.num_parts} parts
 [View on Rebrickable](<${setJSON.set_url}>)`,
-            image: {
-              url: setJSON.set_img_url,
-            }
-          }]
-        },
+          image: {
+            url: setJSON.set_img_url,
+          }
+        }]
       });
     }
 
