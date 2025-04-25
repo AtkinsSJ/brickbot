@@ -2,6 +2,8 @@ import 'dotenv/config';
 import express from 'express';
 import {InteractionResponseType, InteractionType, verifyKeyMiddleware,} from 'discord-interactions';
 import {DiscordRequest, getJSON} from './utils.js';
+import * as fs from "node:fs";
+import * as https from "node:https";
 
 // Create an express app
 const app = express();
@@ -195,6 +197,17 @@ ${setJSON.num_parts} parts
   }
 });
 
-app.listen(PORT, () => {
+let options = {};
+try {
+  options = {
+    cert: fs.readFileSync(process.env.TLS_FULLCHAIN_PATH),
+    key: fs.readFileSync(process.env.TLS_PRIVKEY_PATH)
+  };
+} catch (err) {
+  console.error("Failed to read TLS file:", err);
+  console.log("To enable TLS, please set TLS_FULLCHAIN_PATH and TLS_PRIVKEY_PATH in .env");
+}
+
+https.createServer(options, app).listen(PORT, () => {
   console.log('Listening on port', PORT);
 });
