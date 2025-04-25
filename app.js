@@ -121,10 +121,13 @@ ${minifigJSON.num_parts} parts
         }
 
         // Send completed message
+        const printCount = partJSON.prints?.length || 0;
         return sendResultMessage({
           embeds: [{
             title: `Part ${partJSON.part_num}: ${partJSON.name}`,
             description: `
+Produced ${partJSON.year_from} - ${partJSON.year_to}
+${printCount} known prints
 - [BrickLink](<https://www.bricklink.com/v2/catalog/catalogitem.page?P=${partJSON.external_ids['BrickLink']}>)
 - [Rebrickable](<${partJSON.part_url}>)`,
             image: {
