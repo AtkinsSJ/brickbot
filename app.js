@@ -131,7 +131,7 @@ ${minifigJSON.num_parts} parts
             description: `
 Produced ${partJSON.year_from} - ${partJSON.year_to}
 ${printCount} known prints
-- [BrickLink](<https://www.bricklink.com/v2/catalog/catalogitem.page?P=${partJSON.external_ids['BrickLink']}>)
+- [BrickLink](<https://www.bricklink.com/v2/search.page?q=${partJSON.external_ids['BrickLink']}>)
 - [Rebrickable](<${partJSON.part_url}>)`,
             image: {
               url: partJSON.part_img_url
