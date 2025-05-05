@@ -5,6 +5,7 @@ import {DiscordRequest, getJSON} from './utils.js';
 import * as fs from "node:fs";
 import * as https from "node:https";
 import {ThemeManager} from "./src/ThemeManager.js";
+import {partNicknames} from "./data/part-nicknames.js";
 
 // Create an express app
 const app = express();
@@ -218,6 +219,27 @@ ${setJSON.num_parts} parts
 
       console.error(`unknown command: ${name}`);
       return res.status(400).json({ error: 'unknown command' });
+    }
+
+    // Request for autocomplete suggestions
+    // https://discord.com/developers/docs/interactions/application-commands#autocomplete
+    if (type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE) {
+      const { name } = data;
+
+      if (name === "part") {
+        // Try and provide suggestions for nicknames
+        const query = data.options?.filter(it => it.name === "id")?.at(0)?.value;
+        if (!query)
+          return;
+
+        const matches = Object.keys(partNicknames).filter(it => it.includes(query));
+        return res.send({
+          type: InteractionResponseType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
+          data: {
+            choices: matches.map(it => ({ name: it, value: partNicknames[it] })).slice(0, 25),
+          },
+        });
+      }
     }
 
     console.error('unknown interaction type', type);

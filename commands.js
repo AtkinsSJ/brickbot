@@ -46,9 +46,10 @@ const PART_COMMAND = {
     {
       type: OPTION_TYPE.STRING,
       name: "id",
-      description: "Lego part ID",
+      description: "Lego part ID (or autocomplete by nickname)",
       required: true,
       max_length: 50,
+      autocomplete: true,
     }
   ],
   type: COMMAND_TYPE.CHAT_INPUT,
