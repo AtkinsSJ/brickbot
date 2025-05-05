@@ -203,11 +203,14 @@ try {
     cert: fs.readFileSync(process.env.TLS_FULLCHAIN_PATH),
     key: fs.readFileSync(process.env.TLS_PRIVKEY_PATH)
   };
+  https.createServer(options, app).listen(PORT, () => {
+    console.log('Listening on port', PORT);
+  });
 } catch (err) {
   console.error("Failed to read TLS file:", err);
   console.log("To enable TLS, please set TLS_FULLCHAIN_PATH and TLS_PRIVKEY_PATH in .env");
+  app.listen(PORT, () => {
+    console.log('Listening on port', PORT);
+  });
 }
 
-https.createServer(options, app).listen(PORT, () => {
-  console.log('Listening on port', PORT);
-});
