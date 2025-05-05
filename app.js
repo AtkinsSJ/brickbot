@@ -14,6 +14,44 @@ const PORT = process.env.PORT || 3000;
 const themes = await ThemeManager.load(process.env.REBRICKABLE_KEY);
 console.log(`Loaded ${themes.count} themes. My favourite is ${themes.getByID(themes.randomID()).name}`);
 
+const partURLs = {
+  "BrickLink": "https://www.bricklink.com/v2/search.page?q=@id@",
+  "BrickOwl": "https://www.brickowl.com/catalog/@id@",
+  "Brickset": "https://brickset.com/parts/design-@id@",
+  "LDraw": "https://library.ldraw.org/parts/list?tableSearch=@id@",
+};
+
+function generatePartEmbed(partJSON) {
+  const printCount = partJSON.prints?.length || 0;
+
+  let description = `
+Produced ${partJSON.year_from} - ${partJSON.year_to}
+${printCount} known prints
+`;
+
+  for (let [siteName, ids] of Object.entries(partJSON.external_ids)) {
+    const siteURLFormat = partURLs[siteName];
+    if (!siteURLFormat)
+      continue;
+
+    description += `- ${siteName}: `;
+    for (const id of ids) {
+      description += `[${id}](<${siteURLFormat.replaceAll("@id@", id)}>) `;
+    }
+    description += '\n';
+  }
+
+  description += `- Rebrickable: [${partJSON.part_num}](<${partJSON.part_url}>)\n`;
+
+  return {
+    title: `Part ${partJSON.part_num}: ${partJSON.name}`,
+    description: description,
+    image: {
+      url: partJSON.part_img_url
+    }
+  };
+}
+
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
  * Parse request body and verifies incoming requests using discord-interactions package
@@ -128,19 +166,8 @@ ${minifigJSON.num_parts} parts
         const partJSON = partsJSON.results[0];
 
         // Send completed message
-        const printCount = partJSON.prints?.length || 0;
         return sendResultMessage({
-          embeds: [{
-            title: `Part ${partJSON.part_num}: ${partJSON.name}`,
-            description: `
-Produced ${partJSON.year_from} - ${partJSON.year_to}
-${printCount} known prints
-- [BrickLink](<https://www.bricklink.com/v2/search.page?q=${partJSON.external_ids['BrickLink']}>)
-- [Rebrickable](<${partJSON.part_url}>)`,
-            image: {
-              url: partJSON.part_img_url
-            }
-          }]
+          embeds: [generatePartEmbed(partJSON)]
         });
       }
 
