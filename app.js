@@ -4,11 +4,15 @@ import {InteractionResponseType, InteractionType, verifyKeyMiddleware,} from 'di
 import {DiscordRequest, getJSON} from './utils.js';
 import * as fs from "node:fs";
 import * as https from "node:https";
+import {ThemeManager} from "./src/ThemeManager.js";
 
 // Create an express app
 const app = express();
 // Get port, or default to 3000
 const PORT = process.env.PORT || 3000;
+
+const themes = await ThemeManager.load(process.env.REBRICKABLE_KEY);
+console.log(`Loaded ${themes.count} themes. My favourite is ${themes.getByID(themes.randomID()).name}`);
 
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
@@ -167,11 +171,14 @@ ${printCount} known prints
           return replaceLoadingMessage(`:warning: Unable to get set '${setID}': ${setJSON.detail}`);
         }
 
+        const theme = themes.getByID(setJSON.theme_id);
+
         // Send completed message
         return sendResultMessage({
           embeds: [{
             title: `${setJSON.name} (${setJSON.set_num})`,
             description: `
+Theme: [${theme.name}](<${theme.url}>)
 Released in ${setJSON.year}
 ${setJSON.num_parts} parts
 [View on Rebrickable](<${setJSON.set_url}>)`,
