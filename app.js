@@ -16,11 +16,22 @@ const PORT = process.env.PORT || 3000;
 const themes = await ThemeManager.load(process.env.REBRICKABLE_KEY);
 console.log(`Loaded ${themes.count} themes. My favourite is ${themes.getByID(themes.randomID()).name}`);
 
-const partURLs = {
-  "BrickLink": "https://www.bricklink.com/v2/search.page?q=@id@",
-  "BrickOwl": "https://www.brickowl.com/catalog/@id@",
-  "Brickset": "https://brickset.com/parts/design-@id@",
-  "LDraw": "https://library.ldraw.org/parts/list?tableSearch=@id@",
+const partLinks = {
+  "BrickLink": function (ids) {
+    return ids.map(id => `[${id}](<https://www.bricklink.com/v2/search.page?q=${id}>)`).join(", ");
+  },
+  "BrickOwl": function (ids) {
+    return ids.map(id => `[${id}](<https://www.brickowl.com/catalog/${id}>)`).join(", ");
+  },
+  "Brickset": function (ids) {
+    return ids.map(id => `[${id}](<https://brickset.com/parts/design-${id}>)`).join(", ");
+  },
+  "LDraw": function (ids) {
+    return ids.map(id => `[${id}](<https://library.ldraw.org/parts/list?tableSearch=${id}>)`).join(", ");
+  },
+  "LEGO": function (ids) {
+    return `[Pick a Brick](<https://www.lego.com/pick-and-build/pick-a-brick?query=${ids.join("+")}>)`;
+  },
 };
 
 function generateInfoBox(accentColor, text, thumbnailURL) {
@@ -56,15 +67,11 @@ ${printCount} known prints
 `;
 
   for (let [siteName, ids] of Object.entries(partJSON.external_ids)) {
-    const siteURLFormat = partURLs[siteName];
-    if (!siteURLFormat)
+    const formatLinks = partLinks[siteName];
+    if (!formatLinks)
       continue;
 
-    description += `- ${siteName}: `;
-    for (const id of ids) {
-      description += `[${id}](<${siteURLFormat.replaceAll("@id@", id)}>) `;
-    }
-    description += '\n';
+    description += `- ${siteName}: ${formatLinks(ids)}\n`;
   }
 
   description += `- Rebrickable: [${partJSON.part_num}](<${partJSON.part_url}>)\n`;
