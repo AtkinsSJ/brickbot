@@ -6,6 +6,7 @@ import * as fs from "node:fs";
 import * as https from "node:https";
 import {ThemeManager} from "./src/ThemeManager.js";
 import {partNicknames} from "./data/part-nicknames.js";
+import {ComponentType, MessageFlag} from "./src/Discord.js";
 
 // Create an express app
 const app = express();
@@ -22,10 +23,11 @@ const partURLs = {
   "LDraw": "https://library.ldraw.org/parts/list?tableSearch=@id@",
 };
 
-function generatePartEmbed(partJSON) {
+function generatePartMessage(partJSON) {
   const printCount = partJSON.prints?.length || 0;
 
   let description = `
+## Part ${partJSON.part_num}: ${partJSON.name}
 Produced ${partJSON.year_from} - ${partJSON.year_to}
 ${printCount} known prints
 `;
@@ -45,11 +47,24 @@ ${printCount} known prints
   description += `- Rebrickable: [${partJSON.part_num}](<${partJSON.part_url}>)\n`;
 
   return {
-    title: `Part ${partJSON.part_num}: ${partJSON.name}`,
-    description: description,
-    image: {
-      url: partJSON.part_img_url
-    }
+    flags: MessageFlag.IsComponentsV2,
+    components: [{
+      type: ComponentType.Container,
+      accent_color: 0x00AAFC,
+      components: [{
+        type: ComponentType.Section,
+        components: [{
+          type: ComponentType.TextDisplay,
+          content: description,
+        }],
+        accessory: {
+          type: ComponentType.Thumbnail,
+          media: {
+            url: partJSON.part_img_url,
+          }
+        },
+      }]
+    }]
   };
 }
 
@@ -167,9 +182,7 @@ ${minifigJSON.num_parts} parts
         const partJSON = partsJSON.results[0];
 
         // Send completed message
-        return sendResultMessage({
-          embeds: [generatePartEmbed(partJSON)]
-        });
+        return sendResultMessage(generatePartMessage(partJSON));
       }
 
       // /set <id>
