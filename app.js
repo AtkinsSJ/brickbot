@@ -23,6 +23,29 @@ const partURLs = {
   "LDraw": "https://library.ldraw.org/parts/list?tableSearch=@id@",
 };
 
+function generateInfoBox(accentColor, text, thumbnailURL) {
+  return {
+    flags: MessageFlag.IsComponentsV2,
+    components: [{
+      type: ComponentType.Container,
+      accent_color: accentColor,
+      components: [{
+        type: ComponentType.Section,
+        components: [{
+          type: ComponentType.TextDisplay,
+          content: text,
+        }],
+        accessory: {
+          type: ComponentType.Thumbnail,
+          media: {
+            url: thumbnailURL,
+          }
+        },
+      }]
+    }]
+  };
+}
+
 function generatePartMessage(partJSON) {
   const printCount = partJSON.prints?.length || 0;
 
@@ -46,26 +69,29 @@ ${printCount} known prints
 
   description += `- Rebrickable: [${partJSON.part_num}](<${partJSON.part_url}>)\n`;
 
-  return {
-    flags: MessageFlag.IsComponentsV2,
-    components: [{
-      type: ComponentType.Container,
-      accent_color: 0x00AAFC,
-      components: [{
-        type: ComponentType.Section,
-        components: [{
-          type: ComponentType.TextDisplay,
-          content: description,
-        }],
-        accessory: {
-          type: ComponentType.Thumbnail,
-          media: {
-            url: partJSON.part_img_url,
-          }
-        },
-      }]
-    }]
-  };
+  return generateInfoBox(0x00AAFC, description, partJSON.part_img_url);
+}
+
+function generateMinifigMessage(minifigJSON) {
+  const description = `
+## ${minifigJSON.name}
+${minifigJSON.num_parts} parts
+[View on Rebrickable](<${minifigJSON.set_url}>)`;
+
+  return generateInfoBox(0xFFC404, description, minifigJSON.set_img_url);
+}
+
+function generateSetMessage(setJSON) {
+  const theme = themes.getByID(setJSON.theme_id);
+
+  const description = `
+## ${setJSON.name} (${setJSON.set_num})
+Theme: [${theme.name}](<${theme.url}>)
+Released in ${setJSON.year}
+${setJSON.num_parts} parts
+[View on Rebrickable](<${setJSON.set_url}>)`;
+
+  return generateInfoBox(0xD12A37, description, setJSON.set_img_url);
 }
 
 /**
@@ -145,17 +171,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
         }
 
         // Send completed message
-        return sendResultMessage({
-          embeds: [{
-            title: `${minifigJSON.name}`,
-            description: `
-${minifigJSON.num_parts} parts
-[View on Rebrickable](<${minifigJSON.set_url}>)`,
-            image: {
-              url: minifigJSON.set_img_url,
-            },
-          }],
-        });
+        return sendResultMessage(generateMinifigMessage(minifigJSON));
       }
 
       // /part <id>
@@ -212,22 +228,8 @@ ${minifigJSON.num_parts} parts
           return replaceLoadingMessage(`:warning: Unable to get set '${setID}': ${setJSON.detail}`);
         }
 
-        const theme = themes.getByID(setJSON.theme_id);
-
         // Send completed message
-        return sendResultMessage({
-          embeds: [{
-            title: `${setJSON.name} (${setJSON.set_num})`,
-            description: `
-Theme: [${theme.name}](<${theme.url}>)
-Released in ${setJSON.year}
-${setJSON.num_parts} parts
-[View on Rebrickable](<${setJSON.set_url}>)`,
-            image: {
-              url: setJSON.set_img_url,
-            }
-          }]
-        });
+        return sendResultMessage(generateSetMessage(setJSON));
       }
 
       console.error(`unknown command: ${name}`);
