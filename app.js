@@ -6,7 +6,8 @@ import * as fs from "node:fs";
 import * as https from "node:https";
 import {ThemeManager} from "./src/ThemeManager.js";
 import {partNicknames} from "./data/part-nicknames.js";
-import {ComponentType, MessageFlag} from "./src/Discord.js";
+import {ComponentType, generateInfoBox, MessageFlag} from "./src/Discord.js";
+import {Part} from "./src/Part.js";
 
 process.title = "BrickBot";
 
@@ -17,76 +18,6 @@ const PORT = process.env.PORT || 3000;
 
 const themes = await ThemeManager.load(process.env.REBRICKABLE_KEY);
 console.log(`Loaded ${themes.count} themes. My favourite is ${themes.getByID(themes.randomID()).name}`);
-
-const partLinks = {
-  "BrickLink": function (ids) {
-    return ids.map(id => `[${id}](<https://www.bricklink.com/v2/search.page?q=${id}>)`).join(", ");
-  },
-  "BrickOwl": function (ids) {
-    return ids.map(id => `[${id}](<https://www.brickowl.com/catalog/${id}>)`).join(", ");
-  },
-  "Brickset": function (ids) {
-    return ids.map(id => `[${id}](<https://brickset.com/parts/design-${id}>)`).join(", ");
-  },
-  "LDraw": function (ids) {
-    return ids.map(id => `[${id}](<https://library.ldraw.org/parts/list?tableSearch=${id}>)`).join(", ");
-  },
-  "LEGO": function (ids) {
-    return `[Pick a Brick](<https://www.lego.com/pick-and-build/pick-a-brick?query=${ids.join("+")}>)`;
-  },
-};
-
-function generateInfoBox(accentColor, text, thumbnailURL) {
-  return {
-    flags: MessageFlag.IsComponentsV2,
-    components: [{
-      type: ComponentType.Container,
-      accent_color: accentColor,
-      components: [{
-        type: ComponentType.Section,
-        components: [{
-          type: ComponentType.TextDisplay,
-          content: text,
-        }],
-        accessory: {
-          type: ComponentType.Thumbnail,
-          media: {
-            url: thumbnailURL || "https://rebrickable.com/static/img/nil.png",
-          }
-        },
-      }]
-    }]
-  };
-}
-
-function generatePartMessage(partJSON) {
-
-  let description = `
-## Part ${partJSON.part_num}: ${partJSON.name}
-Produced ${partJSON.year_from} - ${partJSON.year_to}
-`;
-
-  if (partJSON.print_of) {
-    description += `Print of ${partJSON.print_of}
-`;
-  } else {
-    const printCount = partJSON.prints?.length || 0;
-    description += `${printCount} known prints
-`;
-  }
-
-  for (let [siteName, ids] of Object.entries(partJSON.external_ids)) {
-    const formatLinks = partLinks[siteName];
-    if (!formatLinks)
-      continue;
-
-    description += `- ${siteName}: ${formatLinks(ids)}\n`;
-  }
-
-  description += `- Rebrickable: [${partJSON.part_num}](<${partJSON.part_url}>)\n`;
-
-  return generateInfoBox(0x00AAFC, description, partJSON.part_img_url);
-}
 
 function generateMinifigMessage(minifigJSON) {
   const description = `
@@ -209,7 +140,8 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
           return replaceLoadingMessage(`:warning: Rebrickable API request failed: ${error.message}`);
         }
         if (partJSON && !partJSON.detail) {
-          return sendResultMessage(generatePartMessage(partJSON));
+          const part = Part.fromRebrickableJSON(partJSON);
+          return sendResultMessage(part.discordMessageJSON);
         }
 
         // Then, fall back to the Lego ID
@@ -226,7 +158,8 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
         }
 
         // Send completed message
-        return sendResultMessage(generatePartMessage(partsJSON.results[0]));
+        const part = Part.fromRebrickableJSON(partJSON.results[0]);
+        return sendResultMessage(part.discordMessageJSON);
       }
 
       // /set <id>

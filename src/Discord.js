@@ -56,3 +56,26 @@ export const MessageFlag = {
   HasSnapshot: 1 << 14,
   IsComponentsV2: 1 << 15,
 };
+
+export function generateInfoBox(accentColor, text, thumbnailURL) {
+  return {
+    flags: MessageFlag.IsComponentsV2,
+    components: [{
+      type: ComponentType.Container,
+      accent_color: accentColor,
+      components: [{
+        type: ComponentType.Section,
+        components: [{
+          type: ComponentType.TextDisplay,
+          content: text,
+        }],
+        accessory: {
+          type: ComponentType.Thumbnail,
+          media: {
+            url: thumbnailURL || "https://rebrickable.com/static/img/nil.png",
+          }
+        },
+      }]
+    }]
+  };
+}
