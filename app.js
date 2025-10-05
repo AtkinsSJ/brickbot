@@ -51,9 +51,7 @@ function generateInfoBox(accentColor, text, thumbnailURL) {
         accessory: {
           type: ComponentType.Thumbnail,
           media: {
-            // FIXME: Use different default images for different kinds of info box.
-            //        Probably populate that when loading the Rebrickable JSON.
-            url: thumbnailURL || "https://rebrickable.com/static/img/nil_mf.jpg",
+            url: thumbnailURL || "https://rebrickable.com/static/img/nil.png",
           }
         },
       }]
@@ -96,7 +94,7 @@ function generateMinifigMessage(minifigJSON) {
 ${minifigJSON.num_parts} parts
 [View on Rebrickable](<${minifigJSON.set_url}>)`;
 
-  return generateInfoBox(0xFFC404, description, minifigJSON.set_img_url);
+  return generateInfoBox(0xFFC404, description, minifigJSON.set_img_url || "https://rebrickable.com/static/img/nil_mf.jpg");
 }
 
 function generateSetMessage(setJSON) {
