@@ -49,7 +49,9 @@ function generateInfoBox(accentColor, text, thumbnailURL) {
         accessory: {
           type: ComponentType.Thumbnail,
           media: {
-            url: thumbnailURL,
+            // FIXME: Use different default images for different kinds of info box.
+            //        Probably populate that when loading the Rebrickable JSON.
+            url: thumbnailURL || "https://rebrickable.com/static/img/nil_mf.jpg",
           }
         },
       }]
