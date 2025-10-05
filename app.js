@@ -194,6 +194,20 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
         await sendLoadingMessage(`Loading part #${partID}...`);
 
         // Fetch data from Rebrickable
+
+        // First, try loading as a Rebrickable part ID
+        let partJSON;
+        try {
+          partJSON = await getJSON(`https://rebrickable.com/api/v3/lego/parts/${partID}/?key=${process.env.REBRICKABLE_KEY}`);
+        } catch (error) {
+          console.error(`Rebrickable API request failed: ${error.message}`);
+          return replaceLoadingMessage(`:warning: Rebrickable API request failed: ${error.message}`);
+        }
+        if (partJSON && !partJSON.detail) {
+          return sendResultMessage(generatePartMessage(partJSON));
+        }
+
+        // Then, fall back to the Lego ID
         let partsJSON;
         try {
           partsJSON = await getJSON(`https://rebrickable.com/api/v3/lego/parts/?key=${process.env.REBRICKABLE_KEY}&lego_id=${partID}&inc_part_details=1`);
@@ -202,14 +216,12 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
           return replaceLoadingMessage(`:warning: Rebrickable API request failed: ${error.message}`);
         }
 
-        if (partsJSON.count == 0) {
+        if (partsJSON.count === 0) {
           return replaceLoadingMessage(`No results found for '${partID}'`);
         }
 
-        const partJSON = partsJSON.results[0];
-
         // Send completed message
-        return sendResultMessage(generatePartMessage(partJSON));
+        return sendResultMessage(generatePartMessage(partsJSON.results[0]));
       }
 
       // /set <id>
