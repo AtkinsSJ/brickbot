@@ -62,13 +62,20 @@ function generateInfoBox(accentColor, text, thumbnailURL) {
 }
 
 function generatePartMessage(partJSON) {
-  const printCount = partJSON.prints?.length || 0;
 
   let description = `
 ## Part ${partJSON.part_num}: ${partJSON.name}
 Produced ${partJSON.year_from} - ${partJSON.year_to}
-${printCount} known prints
 `;
+
+  if (partJSON.print_of) {
+    description += `Print of ${partJSON.print_of}
+`;
+  } else {
+    const printCount = partJSON.prints?.length || 0;
+    description += `${printCount} known prints
+`;
+  }
 
   for (let [siteName, ids] of Object.entries(partJSON.external_ids)) {
     const formatLinks = partLinks[siteName];
