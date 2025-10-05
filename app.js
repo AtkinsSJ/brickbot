@@ -81,6 +81,14 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
           body: {
             content: text,
           },
+        }).catch((error) => {
+          console.error(`Failed to replace loading message with "${text}":\n\n${error}`);
+          DiscordRequest(`webhooks/${process.env.APP_ID}/${req.body.token}`, {
+            method: "POST",
+            body: {
+              content: ":boom: Error when trying to patch discord message. Contact AtkinsSJ!",
+            }
+          });
         });
       }
 
@@ -88,6 +96,14 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
         return DiscordRequest(`webhooks/${process.env.APP_ID}/${req.body.token}`, {
           method: "POST",
           body: messageBody,
+        }).catch((error) => {
+          console.error(`Failed to send result message "${JSON.stringify(messageBody)}":\n\n${error}`);
+          DiscordRequest(`webhooks/${process.env.APP_ID}/${req.body.token}`, {
+            method: "POST",
+            body: {
+              content: ":boom: Error when trying to send a discord message. Contact AtkinsSJ!",
+            }
+          });
         });
       }
 
