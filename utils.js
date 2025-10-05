@@ -45,7 +45,11 @@ export async function getJSON(url) {
         data += chunk;
       });
       response.on("end", () => {
-        resolve(JSON.parse(data));
+        try {
+          resolve(JSON.parse(data));
+        } catch (error) {
+          reject(error);
+        }
       });
     }).on("error", (error) => {
       reject(error);
