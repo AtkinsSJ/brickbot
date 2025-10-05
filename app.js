@@ -8,6 +8,8 @@ import {ThemeManager} from "./src/ThemeManager.js";
 import {partNicknames} from "./data/part-nicknames.js";
 import {ComponentType, MessageFlag} from "./src/Discord.js";
 
+process.title = "BrickBot";
+
 // Create an express app
 const app = express();
 // Get port, or default to 3000
