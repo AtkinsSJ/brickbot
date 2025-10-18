@@ -1,6 +1,8 @@
 import {getJSON} from "../utils.js";
 
 export class ThemeManager {
+  static #instance;
+
   #themes = {};
 
   constructor(themes) {
@@ -20,7 +22,12 @@ export class ThemeManager {
       console.error(`Unable to load theme data: ${error}`);
     }
 
-    return new ThemeManager(themes);
+    this.#instance = new ThemeManager(themes);
+    return this.#instance;
+  }
+
+  static get instance() {
+    return this.#instance;
   }
 
   get count() {
