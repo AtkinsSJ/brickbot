@@ -1,8 +1,8 @@
 {
-  "name": "discord-getting-started",
+  "name": "brickbot",
   "private": true,
   "version": "1.0.0",
-  "description": "Discord example app",
+  "description": "Discord bot providing Lego-related commands",
   "main": "app.js",
   "type": "module",
   "engines": {
@@ -13,7 +13,7 @@
     "register": "node commands.js",
     "dev": "nodemon app.js"
   },
-  "author": "Shay DeWael",
+  "author": "Sam Atkins",
   "license": "MIT",
   "dependencies": {
     "discord-interactions": "^4.3.0",
