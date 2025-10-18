@@ -1,4 +1,7 @@
 // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-types
+import {InteractionResponseType} from "discord-interactions";
+import {DiscordRequest} from "../utils.js";
+
 export const CommandType = {
   ChatInput: 1,
   User: 2,
@@ -78,4 +81,46 @@ export function generateInfoBox(accentColor, text, thumbnailURL) {
       }]
     }]
   };
+}
+
+export async function sendLoadingMessage(response, text) {
+  return response.send({
+    type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+    data: {
+      content: text,
+    }
+  });
+}
+
+export async function replaceLoadingMessage(request, text) {
+  const LOADING_MESSAGE_URL = `webhooks/${process.env.APP_ID}/${request.body.token}/messages/@original`;
+  return DiscordRequest(LOADING_MESSAGE_URL, {
+    method: "PATCH",
+    body: {
+      content: text,
+    },
+  }).catch((error) => {
+    console.error(`Failed to replace loading message with "${text}":\n\n${error}`);
+    DiscordRequest(`webhooks/${process.env.APP_ID}/${request.body.token}`, {
+      method: "POST",
+      body: {
+        content: ":boom: Error when trying to patch discord message. Contact AtkinsSJ!",
+      }
+    });
+  });
+}
+
+export async function sendResultMessage(request, messageBody) {
+  return DiscordRequest(`webhooks/${process.env.APP_ID}/${request.body.token}`, {
+    method: "POST",
+    body: messageBody,
+  }).catch((error) => {
+    console.error(`Failed to send result message "${JSON.stringify(messageBody)}":\n\n${error}`);
+    DiscordRequest(`webhooks/${process.env.APP_ID}/${request.body.token}`, {
+      method: "POST",
+      body: {
+        content: ":boom: Error when trying to send a discord message. Contact AtkinsSJ!",
+      }
+    });
+  });
 }
