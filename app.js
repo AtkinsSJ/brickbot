@@ -19,6 +19,10 @@ console.log(`${Object.keys(Commands).length} commands found: ${Object.keys(Comma
 const themes = await ThemeManager.load(process.env.REBRICKABLE_KEY);
 console.log(`Loaded ${themes.count} themes. My favourite is ${themes.getByID(themes.randomID()).name}`);
 
+app.get('/healthcheck', (req, res) => {
+  res.send("All good!");
+});
+
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
  * Parse request body and verifies incoming requests using discord-interactions package
