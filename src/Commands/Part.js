@@ -57,7 +57,7 @@ export class PartCommand extends Command {
     }
 
     // Send completed message
-    const part = Part.fromRebrickableJSON(partJSON.results[0]);
+    const part = Part.fromRebrickableJSON(partsJSON.results[0]);
     return sendResultMessage(request, part.discordMessageJSON);
   }
 
