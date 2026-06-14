@@ -1,5 +1,5 @@
-import {generateInfoBox} from "./Discord.js";
-import {sortObjectByKeys} from "../utils.js";
+import {generateInfoBox} from "../Discord.js";
+import {sortObjectByKeys} from "../../utils.js";
 
 const partLinks = {
   "BrickLink": function (ids) {

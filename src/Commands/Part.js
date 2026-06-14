@@ -1,7 +1,7 @@
 import {Command} from "../Command.js";
 import {CommandType, OptionType, replaceLoadingMessage, sendLoadingMessage, sendResultMessage} from "../Discord.js";
 import {getJSON} from "../../utils.js";
-import {Part} from "../Part.js";
+import {Part} from "../Data/Part.js";
 import {partNicknames} from "../../data/part-nicknames.js";
 import {InteractionResponseType} from "discord-interactions";
 
