@@ -1,14 +1,7 @@
 import {Command} from "../Command.js";
-import {
-  CommandType,
-  generateInfoBox,
-  OptionType,
-  replaceLoadingMessage,
-  sendLoadingMessage,
-  sendResultMessage
-} from "../Discord.js";
+import {CommandType, OptionType, replaceLoadingMessage, sendLoadingMessage, sendResultMessage} from "../Discord.js";
 import {getJSON} from "../../utils.js";
-import {ThemeManager} from "../ThemeManager.js";
+import {Set} from "../Data/Set.js";
 
 export class SetCommand extends Command {
   constructor() {
@@ -27,30 +20,16 @@ export class SetCommand extends Command {
     // /set <id>
     // Look up a set by its Lego ID
 
-    // TODO: Put this in a Set class like for Part.
-    function generateSetMessage(setJSON) {
-      const theme = ThemeManager.instance.getByID(setJSON.theme_id);
-
-      const description = `
-## ${setJSON.name} (${setJSON.set_num})
-Theme: [${theme.name}](<${theme.url}>)
-Released in ${setJSON.year}
-${setJSON.num_parts} parts
-[View on Rebrickable](<${setJSON.set_url}>)`;
-
-      return generateInfoBox(0xD12A37, description, setJSON.set_img_url);
-    }
-
-
     // Get the id
     let setID = request.body.data.options[0].value;
 
+    await sendLoadingMessage(response, `Loading set #${setID}...`);
+
     // Rebrickable set IDs always have a dash and a number at the end. If we don't have one, add `-1`.
-    if (!setID.includes('-')) {
+    let didManuallySpecifyVersion = setID.includes('-');
+    if (!didManuallySpecifyVersion) {
       setID += "-1";
     }
-
-    await sendLoadingMessage(response, `Loading set #${setID}...`);
 
     // Fetch data from Rebrickable
     let setJSON;
@@ -67,7 +46,8 @@ ${setJSON.num_parts} parts
     }
 
     // Send completed message
-    return sendResultMessage(request, generateSetMessage(setJSON));
+    const set = Set.fromRebrickableJSON(setJSON, didManuallySpecifyVersion);
+    return sendResultMessage(request, set.discordMessageJSON);
   }
 
 }
