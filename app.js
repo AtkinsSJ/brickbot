@@ -18,7 +18,7 @@ await Promise.all([
   ColorManager.load(process.env.REBRICKABLE_KEY),
   ThemeManager.load(process.env.REBRICKABLE_KEY)
 ]).then(([colors, themes]) => {
-  console.log(`Loaded ${colors.count} colors. My favourite is ${colors.getByID(colors.randomID()).name}`);
+  console.log(`Loaded ${colors.count} colors. My favourite is ${colors.random().name}`);
   console.log(`Loaded ${themes.count} themes. My favourite is ${themes.getByID(themes.randomID()).name}`);
 });
 
