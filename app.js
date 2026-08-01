@@ -3,6 +3,7 @@ import express from 'express';
 import {InteractionResponseType, InteractionType, verifyKeyMiddleware,} from 'discord-interactions';
 import {ThemeManager} from "./src/ThemeManager.js";
 import {Commands} from "./src/Commands.js";
+import {ColorManager} from "./src/ColorManager.js";
 
 process.title = "BrickBot";
 
@@ -13,8 +14,13 @@ const PORT = process.env.PORT || 3000;
 
 console.log(`${Object.keys(Commands).length} commands found: ${Object.keys(Commands).join(', ')}.`);
 
-const themes = await ThemeManager.load(process.env.REBRICKABLE_KEY);
-console.log(`Loaded ${themes.count} themes. My favourite is ${themes.getByID(themes.randomID()).name}`);
+await Promise.all([
+  ColorManager.load(process.env.REBRICKABLE_KEY),
+  ThemeManager.load(process.env.REBRICKABLE_KEY)
+]).then(([colors, themes]) => {
+  console.log(`Loaded ${colors.count} colors. My favourite is ${colors.getByID(colors.randomID()).name}`);
+  console.log(`Loaded ${themes.count} themes. My favourite is ${themes.getByID(themes.randomID()).name}`);
+});
 
 app.get('/healthcheck', (req, res) => {
   res.send("All good!");

@@ -61,24 +61,31 @@ export const MessageFlag = {
 };
 
 export function generateInfoBox(accentColor, text, thumbnailURL) {
+  let infoBox = [{
+    type: ComponentType.TextDisplay,
+    content: text,
+  }];
+
+  // If we have a thumbnail to show, wrap the text in a section with a thumbnail accessory.
+  if (thumbnailURL !== false) {
+    infoBox = [{
+      type: ComponentType.Section,
+      components: infoBox,
+      accessory: {
+        type: ComponentType.Thumbnail,
+        media: {
+          url: thumbnailURL || "https://rebrickable.com/static/img/nil.png",
+        }
+      },
+    }];
+  }
+
   return {
     flags: MessageFlag.IsComponentsV2,
     components: [{
       type: ComponentType.Container,
       accent_color: accentColor,
-      components: [{
-        type: ComponentType.Section,
-        components: [{
-          type: ComponentType.TextDisplay,
-          content: text,
-        }],
-        accessory: {
-          type: ComponentType.Thumbnail,
-          media: {
-            url: thumbnailURL || "https://rebrickable.com/static/img/nil.png",
-          }
-        },
-      }]
+      components: infoBox
     }]
   };
 }
