@@ -43,18 +43,29 @@ export class ColorManager {
     return Object.keys(this.#colors).length;
   }
 
-  getByID(id) {
-    const color = this.#colors[id];
-
-    if (!color) {
-      return this.#colors[-1];
-    }
-
-    return color;
+  random() {
+    const keys = Object.keys(this.#colors);
+    return this.#colors[keys[Math.floor(Math.random() * keys.length)]];
   }
 
-  randomID() {
-    const keys = Object.keys(this.#colors);
-    return keys[Math.floor(Math.random() * keys.length)];
+  getByName(siteName, name) {
+    // FIXME: We could really use an index by site!
+    for (let color of Object.values(this.#colors)) {
+      const nameForSite = color.names[siteName];
+      if (nameForSite && nameForSite.localeCompare(name, undefined, { sensitivity: "base" }) === 0) {
+        return color;
+      }
+    }
+
+    return null;
+  }
+
+  getByID(siteName, id) {
+    // FIXME: We could really use an index by site!
+    for (let color of Object.values(this.#colors)) {
+      if (color.ids[siteName] === id)
+        return color;
+    }
+    return null;
   }
 }
