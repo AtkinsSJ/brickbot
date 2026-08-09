@@ -1,4 +1,5 @@
 import * as fsPromises from "node:fs/promises";
+import sharp from "sharp";
 
 export class ImageGenerator {
   static #instance;
@@ -30,5 +31,12 @@ export class ImageGenerator {
       return this.#transparentColorSVG.replaceAll("$COLOR$", `#${rgb}`);
     }
     return this.#solidColorSVG.replaceAll("$COLOR$", `#${rgb}`);
+  }
+
+  async generatePNGColorSwatch(rgb, isTransparent) {
+    const svg = this.generateColorSwatch(rgb, isTransparent);
+    return await sharp(Buffer.from(svg, "utf-8"))
+      .toFormat('png')
+      .toBuffer();
   }
 }

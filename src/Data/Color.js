@@ -1,5 +1,6 @@
 import {generateInfoBox} from "../Discord.js";
 import {sortObjectByKeys} from "../../utils.js";
+import {ImageGenerator} from "../ImageGenerator.js";
 
 export class Color {
   rgb;
@@ -44,7 +45,10 @@ export class Color {
     return this.names["Rebrickable"];
   }
 
-  get discordMessageJSON() {
+  async getDiscordMessageJSON(request) {
+    const filename = `color-${this.id}.png`;
+    const png = await ImageGenerator.instance.generatePNGColorSwatch(this.rgb, this.isTransparent);
+
     let description = `
 ## Color ${this.names["Rebrickable"]}    
 `;
@@ -58,6 +62,19 @@ export class Color {
       }
     }
 
-    return generateInfoBox(parseInt(this.rgb, 16), description, false);
+    const message = generateInfoBox(
+      parseInt(this.rgb, 16),
+      description,
+      `attachment://${filename}`,
+    );
+
+    const attachments = [{
+      filename,
+      contentType: 'image/png',
+      data: png,
+      description: `Color swatch for ${this.name}`,
+    }];
+
+    return { message, attachments };
   }
 }
