@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+        width="100"
+        height="100.032"
+        viewBox="0 0 26.458333 26.466799"
+        version="1.1"
+        id="svg1"
+        inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+        sodipodi:docname="inkscape-color.svg"
+        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:svg="http://www.w3.org/2000/svg">
+    <sodipodi:namedview
+            id="namedview1"
+            pagecolor="#ffffff"
+            bordercolor="#000000"
+            borderopacity="0.25"
+            inkscape:showpageshadow="2"
+            inkscape:pageopacity="0.0"
+            inkscape:pagecheckerboard="false"
+            inkscape:deskcolor="#d1d1d1"
+            inkscape:document-units="px"
+            inkscape:zoom="2.8284271"
+            inkscape:cx="-10.960155"
+            inkscape:cy="65.584154"
+            inkscape:window-width="2512"
+            inkscape:window-height="1052"
+            inkscape:window-x="0"
+            inkscape:window-y="0"
+            inkscape:window-maximized="1"
+            inkscape:current-layer="layer1"/>
+    <defs
+            id="defs1">
+        <pattern
+                inkscape:collect="always"
+                xlink:href="#Checkerboard"
+                preserveAspectRatio="xMidYMid"
+                id="pattern2"
+                patternTransform="scale(10)"
+                x="0"
+                y="0"/>
+        <pattern
+                inkscape:collect="always"
+                style="fill:#7f7f7f"
+                patternUnits="userSpaceOnUse"
+                width="2"
+                height="2"
+                patternTransform="translate(0,0) scale(10,10)"
+                id="Checkerboard"
+                inkscape:stockid="Checkerboard"
+                preserveAspectRatio="xMidYMid"
+                inkscape:isstock="true"
+                inkscape:label="Chequerboard">
+            <rect
+                    style="stroke:none"
+                    x="0"
+                    y="0"
+                    width="1"
+                    height="1"
+                    id="rect209"/>
+
+            <rect
+                    style="stroke:none"
+                    x="1"
+                    y="1"
+                    width="1"
+                    height="1"
+                    id="rect211"/>
+
+        </pattern>
+    </defs>
+    <g
+            inkscape:label="Layer 1"
+            inkscape:groupmode="layer"
+            id="layer1">
+        <rect
+                style="display:inline;fill:url(#pattern2);stroke-width:0.264583"
+                id="checkerboard"
+                height="26.458332"
+                x="0"
+                y="0"
+                width="26.458332"/>
+        <rect
+                style="display:inline;fill:#fe0000;fill-opacity:0.50186336;stroke-width:0.264583"
+                id="swatch"
+                height="26.458332"
+                x="0"
+                y="0"
+                width="26.458332"/>
+        <path
+                id="rect2"
+                style="display:inline;fill:#fe0000;stroke-width:0.51438"
+                d="M 0,0 H 26.458332 L 0,26.458332 Z"/>
+    </g>
+</svg>
