@@ -4,6 +4,7 @@ import {InteractionResponseType, InteractionType, verifyKeyMiddleware,} from 'di
 import {ThemeManager} from "./src/ThemeManager.js";
 import {Commands} from "./src/Commands.js";
 import {ColorManager} from "./src/ColorManager.js";
+import {ImageGenerator} from "./src/ImageGenerator.js";
 
 process.title = "BrickBot";
 
@@ -16,8 +17,9 @@ console.log(`${Object.keys(Commands).length} commands found: ${Object.keys(Comma
 
 await Promise.all([
   ColorManager.load(process.env.REBRICKABLE_KEY),
-  ThemeManager.load(process.env.REBRICKABLE_KEY)
-]).then(([colors, themes]) => {
+  ThemeManager.load(process.env.REBRICKABLE_KEY),
+  ImageGenerator.init(),
+]).then(([colors, themes, images]) => {
   console.log(`Loaded ${colors.count} colors. My favourite is ${colors.random().name}`);
   console.log(`Loaded ${themes.count} themes. My favourite is ${themes.getByID(themes.randomID()).name}`);
 });
