@@ -84,7 +84,8 @@ export class ColorCommand extends Command {
     if (command.name === "random") {
       // /color random
       const color = colorManager.random();
-      return sendResultMessage(request, color.discordMessageJSON);
+      const { message, attachments } = await color.getDiscordMessageJSON(request);
+      return sendResultMessage(request, message, attachments);
     }
 
     // Other commands are all lookups, of the form `/color source name <name>` or `/color source id <id>`
@@ -105,7 +106,8 @@ export class ColorCommand extends Command {
         return replaceLoadingMessage(request, `${colorSource.displayName} color (${queryType.name}=${queryInput.value}) not found.`);
       }
 
-      return sendResultMessage(request, color.discordMessageJSON);
+      const { message, attachments } = await color.getDiscordMessageJSON(request);
+      return sendResultMessage(request, message, attachments);
     }
 
     return replaceLoadingMessage(request, `:warning: Unrecognized color command '/color ${command.name}'`);
