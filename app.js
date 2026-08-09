@@ -1,11 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import {InteractionResponseType, InteractionType, verifyKeyMiddleware,} from 'discord-interactions';
-import * as fs from "node:fs";
-import * as https from "node:https";
 import {ThemeManager} from "./src/ThemeManager.js";
 import {Commands} from "./src/Commands.js";
-import * as path from "node:path";
 
 process.title = "BrickBot";
 
@@ -63,42 +60,6 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
   }
 });
 
-function readCertificates() {
-  return {
-    cert: fs.readFileSync(process.env.TLS_FULLCHAIN_PATH),
-    key: fs.readFileSync(process.env.TLS_PRIVKEY_PATH)
-  };
-}
-
-let initialOptions;
-try {
-  initialOptions = readCertificates();
-} catch (err) {
-  initialOptions = undefined;
-  console.error("Failed to read TLS file:", err);
-  console.log("To enable TLS, please set TLS_FULLCHAIN_PATH and TLS_PRIVKEY_PATH in .env");
-  app.listen(PORT, () => {
-    console.log('Listening on port', PORT);
-  });
-}
-
-if (initialOptions !== undefined) {
-  let server = https.createServer(initialOptions, app).listen(PORT, () => {
-    console.log('Listening on port', PORT);
-  });
-
-// https://stackoverflow.com/a/74076392/1178345
-// Refresh httpd's certs when certs change on disk. The timeout stuff
-// "ensures" that all 3 relevant files are updated, and accounts for
-// sometimes trigger-happy fs.watch.
-  let certificateWatchPath = path.dirname(fs.realpathSync(process.env.TLS_PRIVKEY_PATH));
-  let waitForCertAndFullChainToGetUpdatedTooTimeout;
-  console.log(`Watching ${certificateWatchPath}...`);
-  fs.watch(certificateWatchPath, () => {
-    clearTimeout(waitForCertAndFullChainToGetUpdatedTooTimeout);
-    waitForCertAndFullChainToGetUpdatedTooTimeout = setTimeout(() => {
-      server.setSecureContext(readCertificates());
-      console.log("Reloaded SSL certificates");
-    }, 1000);
-  });
-}
+app.listen(PORT, () => {
+  console.log('Listening on port', PORT);
+});
