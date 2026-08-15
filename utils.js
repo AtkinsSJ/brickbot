@@ -2,26 +2,37 @@ import 'dotenv/config';
 import * as https from "node:https";
 
 export async function DiscordRequest(endpoint, options) {
-  // append endpoint to root API URL
-  const url = 'https://discord.com/api/v10/' + endpoint;
-  // Stringify payloads
-  if (options.body) options.body = JSON.stringify(options.body);
-  // Use fetch to make requests
+  const url = `https://discord.com/api/v10/${endpoint}`;
+  const isFormData = options.body instanceof FormData;
+
+  const body = options.body && !isFormData
+    ? JSON.stringify(options.body)
+    : options.body;
+
+  const headers = {
+    Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+    // FIXME: Would be nice to source this from package.json if we ever bother using versions.
+    'User-Agent': 'BrickBot/1.0',
+  };
+
+  // fetch() automatically sorts this out for FormData.
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json; charset=UTF-8';
+  }
+
   const res = await fetch(url, {
-    headers: {
-      Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-      'Content-Type': 'application/json; charset=UTF-8',
-      'User-Agent': 'DiscordBot (https://github.com/discord/discord-example-app, 1.0.0)',
-    },
-    ...options
+    // NB: options comes first, because it still has a `body` field that we want to be overridden.
+    ...options,
+    headers,
+    body,
   });
-  // throw API errors
+
   if (!res.ok) {
     const data = await res.json();
     console.log(res.status);
     throw new Error(JSON.stringify(data));
   }
-  // return original response
+
   return res;
 }
 
