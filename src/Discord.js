@@ -117,10 +117,39 @@ export async function replaceLoadingMessage(request, text) {
   });
 }
 
-export async function sendResultMessage(request, messageBody) {
+export async function sendResultMessage(request, messageBody, attachments = []) {
+
+  let body = messageBody;
+
+  if (attachments.length > 0) {
+    const formData = new FormData();
+
+    messageBody.attachments = attachments.map((attachment, index) => ({
+      id: index,
+      filename: attachment.filename,
+      description: attachment.description,
+    }));
+
+    formData.append('payload_json', JSON.stringify(messageBody));
+
+    attachments.forEach((attachment, index) => {
+      const blob = new Blob(
+        [attachment.data],
+        { type: attachment.contentType },
+      );
+      formData.append(
+        `files[${index}]`,
+        blob,
+        attachment.filename,
+      );
+    });
+
+    body = formData;
+  }
+
   return DiscordRequest(`webhooks/${process.env.APP_ID}/${request.body.token}`, {
     method: "POST",
-    body: messageBody,
+    body,
   }).catch((error) => {
     console.error(`Failed to send result message "${JSON.stringify(messageBody)}":\n\n${error}`);
     DiscordRequest(`webhooks/${process.env.APP_ID}/${request.body.token}`, {
