@@ -52,7 +52,7 @@ export class ColorManager {
   getByName(siteName, name) {
     // FIXME: We could really use an index by site!
     for (let color of this.#colors.values()) {
-      const nameForSite = color.names[siteName];
+      const nameForSite = color.names.get(siteName);
       if (nameForSite && nameForSite.localeCompare(name, undefined, { sensitivity: "base" }) === 0) {
         return color;
       }
@@ -64,7 +64,7 @@ export class ColorManager {
   getByID(siteName, id) {
     // FIXME: We could really use an index by site!
     for (let color of this.#colors.values()) {
-      if (color.ids[siteName] === id)
+      if (color.ids.get(siteName) === id)
         return color;
     }
     return null;
@@ -76,11 +76,11 @@ export class ColorManager {
     const queryRegex = new RegExp(query, "i");
     return this.#colors.values()
       .filter(color => {
-        const siteColorName = color.names[siteName];
+        const siteColorName = color.names.get(siteName);
         return siteColorName && siteColorName.match(queryRegex)
       })
       .map(color => {
-        return color.names[siteName];
+        return color.names.get(siteName);
       })
       .toArray()
       .sort()
