@@ -4,14 +4,14 @@ import {Color} from "./Data/Color.js";
 export class ColorManager {
   static #instance;
 
-  #colors = {};
+  #colors; // Map()
 
   constructor(colors) {
     this.#colors = colors;
   }
 
   static async load(rebrickableKey) {
-    const colors = {};
+    const colors = new Map();
 
     console.log("Loading colors...");
 
@@ -23,7 +23,7 @@ export class ColorManager {
         requestUrl = json.next;
 
         for (const result of json.results) {
-          colors[result.id] = Color.fromRebrickableJSON(result);
+          colors.set(result.id, Color.fromRebrickableJSON(result));
         }
       }
     } catch (error) {
@@ -40,17 +40,18 @@ export class ColorManager {
   }
 
   get count() {
-    return Object.keys(this.#colors).length;
+    return this.#colors.size;
   }
 
   random() {
-    const keys = Object.keys(this.#colors);
-    return this.#colors[keys[Math.floor(Math.random() * keys.length)]];
+    const randomIndex = Math.floor(Math.random() * this.#colors.size);
+    const values = Array.from(this.#colors.values());
+    return values[randomIndex];
   }
 
   getByName(siteName, name) {
     // FIXME: We could really use an index by site!
-    for (let color of Object.values(this.#colors)) {
+    for (let color of this.#colors.values()) {
       const nameForSite = color.names[siteName];
       if (nameForSite && nameForSite.localeCompare(name, undefined, { sensitivity: "base" }) === 0) {
         return color;
@@ -62,7 +63,7 @@ export class ColorManager {
 
   getByID(siteName, id) {
     // FIXME: We could really use an index by site!
-    for (let color of Object.values(this.#colors)) {
+    for (let color of this.#colors.values()) {
       if (color.ids[siteName] === id)
         return color;
     }
@@ -73,7 +74,7 @@ export class ColorManager {
   findNameMatches(siteName, query, maximumResults = 25) {
     // FIXME: We could really use an index by site!
     const queryRegex = new RegExp(query, "i");
-    return Object.values(this.#colors)
+    return this.#colors.values()
       .filter(color => {
         const siteColorName = color.names[siteName];
         return siteColorName && siteColorName.match(queryRegex)
@@ -81,6 +82,7 @@ export class ColorManager {
       .map(color => {
         return color.names[siteName];
       })
+      .toArray()
       .sort()
       .slice(0, maximumResults);
   }
