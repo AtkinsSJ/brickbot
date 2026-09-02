@@ -1,11 +1,13 @@
 export class Command {
   #name;
+  #nameLocalizations;
   #description;
   #discordType;
   #discordOptions;
 
-  constructor(name, description, discordType, discordOptions) {
+  constructor(name, description, discordType, discordOptions, nameLocalizations = null) {
     this.#name = name;
+    this.#nameLocalizations = nameLocalizations;
     this.#description = description;
     this.#discordType = discordType;
     this.#discordOptions = discordOptions;
@@ -14,6 +16,7 @@ export class Command {
   get discordDefinition() {
     return {
       name: this.#name,
+      name_localizations: this.#nameLocalizations,
       description: this.#description,
       options: this.#discordOptions,
       type: this.#discordType,

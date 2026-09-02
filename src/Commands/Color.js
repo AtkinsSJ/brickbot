@@ -69,7 +69,9 @@ export class ColorCommand extends Command {
         .map(([commandName, v]) => {
           return generateLookupCommandData(commandName, v.displayName);
         }),
-    ]);
+    ], {
+      "en-GB": "colour",
+    });
   }
 
   async run(request, response, data) {
