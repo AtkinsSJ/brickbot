@@ -65,9 +65,10 @@ export class PartCommand extends Command {
     // Try and provide suggestions for nicknames
     const query = data.options?.filter(it => it.name === "id")?.at(0)?.value;
     if (!query)
-      return;
+      return null;
 
-    const matches = Object.keys(partNicknames).filter(it => it.includes(query));
+    const queryRegex = new RegExp(query, "i");
+    const matches = Object.keys(partNicknames).filter(it => it.match(queryRegex));
     return response.send({
       type: InteractionResponseType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
       data: {
