@@ -68,4 +68,20 @@ export class ColorManager {
     }
     return null;
   }
+
+  // NB: Discord limits autocomplete results to 25 entries
+  findNameMatches(siteName, query, maximumResults = 25) {
+    // FIXME: We could really use an index by site!
+    const queryRegex = new RegExp(query, "i");
+    return Object.values(this.#colors)
+      .filter(color => {
+        const siteColorName = color.names[siteName];
+        return siteColorName && siteColorName.match(queryRegex)
+      })
+      .map(color => {
+        return color.names[siteName];
+      })
+      .sort()
+      .slice(0, maximumResults);
+  }
 }

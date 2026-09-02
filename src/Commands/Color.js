@@ -1,6 +1,7 @@
 import {Command} from "../Command.js";
 import {CommandType, OptionType, replaceLoadingMessage, sendLoadingMessage, sendResultMessage} from "../Discord.js";
 import {ColorManager} from "../ColorManager.js";
+import {InteractionResponseType} from "discord-interactions";
 
 const colorSources = {
   "bricklink": {
@@ -49,6 +50,7 @@ function generateLookupCommandData(commandName, displayName) {
             type: OptionType.String,
             name: "name",
             required: true,
+            autocomplete: true,
             description: `${displayName} name`,
           }
         ]
@@ -75,9 +77,6 @@ export class ColorCommand extends Command {
   }
 
   async run(request, response, data) {
-    console.log("Requested color command!");
-    console.log(JSON.stringify(data));
-
     await sendLoadingMessage(response, "Loading color...");
 
     const command = data.options[0];
@@ -115,5 +114,29 @@ export class ColorCommand extends Command {
     return replaceLoadingMessage(request, `:warning: Unrecognized color command '/color ${command.name}'`);
   }
 
+  async autocomplete(request, response, data) {
+    const command = data.options[0];
+    const colorManager = ColorManager.instance;
+
+    // NB: This is simplified because we only have one option to the command. If we have multiple, we'll need to detect
+    //     which one is focused.
+    const colorSource = colorSources[command.name];
+    if (!colorSource)
+      return null;
+
+    const queryType = command.options[0];
+    const queryInput = queryType?.options?.at(0);
+    if (queryType.name === "name") {
+      const results = colorManager.findNameMatches(colorSource.internalName, queryInput.value);
+      return response.send({
+        type: InteractionResponseType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
+        data: {
+          choices: results.map(it => ({ name: it, value: it }))
+        },
+      })
+    }
+
+    return null;
+  }
 }
 
