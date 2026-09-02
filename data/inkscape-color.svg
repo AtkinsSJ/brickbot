@@ -2,98 +2,149 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-        width="100"
-        height="100.032"
-        viewBox="0 0 26.458333 26.466799"
-        version="1.1"
-        id="svg1"
-        inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
-        sodipodi:docname="inkscape-color.svg"
-        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:svg="http://www.w3.org/2000/svg">
-    <sodipodi:namedview
-            id="namedview1"
-            pagecolor="#ffffff"
-            bordercolor="#000000"
-            borderopacity="0.25"
-            inkscape:showpageshadow="2"
-            inkscape:pageopacity="0.0"
-            inkscape:pagecheckerboard="false"
-            inkscape:deskcolor="#d1d1d1"
-            inkscape:document-units="px"
-            inkscape:zoom="2.8284271"
-            inkscape:cx="-10.960155"
-            inkscape:cy="65.584154"
-            inkscape:window-width="2512"
-            inkscape:window-height="1052"
-            inkscape:window-x="0"
-            inkscape:window-y="0"
-            inkscape:window-maximized="1"
-            inkscape:current-layer="layer1"/>
-    <defs
-            id="defs1">
-        <pattern
-                inkscape:collect="always"
-                xlink:href="#Checkerboard"
-                preserveAspectRatio="xMidYMid"
-                id="pattern2"
-                patternTransform="scale(10)"
-                x="0"
-                y="0"/>
-        <pattern
-                inkscape:collect="always"
-                style="fill:#7f7f7f"
-                patternUnits="userSpaceOnUse"
-                width="2"
-                height="2"
-                patternTransform="translate(0,0) scale(10,10)"
-                id="Checkerboard"
-                inkscape:stockid="Checkerboard"
-                preserveAspectRatio="xMidYMid"
-                inkscape:isstock="true"
-                inkscape:label="Chequerboard">
-            <rect
-                    style="stroke:none"
-                    x="0"
-                    y="0"
-                    width="1"
-                    height="1"
-                    id="rect209"/>
-
-            <rect
-                    style="stroke:none"
-                    x="1"
-                    y="1"
-                    width="1"
-                    height="1"
-                    id="rect211"/>
-
-        </pattern>
-    </defs>
-    <g
-            inkscape:label="Layer 1"
-            inkscape:groupmode="layer"
-            id="layer1">
-        <rect
-                style="display:inline;fill:url(#pattern2);stroke-width:0.264583"
-                id="checkerboard"
-                height="26.458332"
-                x="0"
-                y="0"
-                width="26.458332"/>
-        <rect
-                style="display:inline;fill:#fe0000;fill-opacity:0.50186336;stroke-width:0.264583"
-                id="swatch"
-                height="26.458332"
-                x="0"
-                y="0"
-                width="26.458332"/>
-        <path
-                id="rect2"
-                style="display:inline;fill:#fe0000;stroke-width:0.51438"
-                d="M 0,0 H 26.458332 L 0,26.458332 Z"/>
-    </g>
+   width="100"
+   height="100.032"
+   viewBox="0 0 26.458333 26.466799"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   sodipodi:docname="inkscape-color.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="false"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="10.606602"
+     inkscape:cy="25.986174"
+     inkscape:window-width="2512"
+     inkscape:window-height="1052"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer3" />
+  <defs
+     id="defs1">
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#Checkerboard"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2"
+       patternTransform="scale(10)"
+       x="0"
+       y="0" />
+    <pattern
+       inkscape:collect="always"
+       style="fill:#7f7f7f"
+       patternUnits="userSpaceOnUse"
+       width="2"
+       height="2"
+       patternTransform="translate(0,0) scale(10,10)"
+       id="Checkerboard"
+       inkscape:stockid="Checkerboard"
+       preserveAspectRatio="xMidYMid"
+       inkscape:isstock="true"
+       inkscape:label="Chequerboard">
+      <rect
+         style="stroke:none"
+         x="0"
+         y="0"
+         width="1"
+         height="1"
+         id="rect209" />
+      <rect
+         style="stroke:none"
+         x="1"
+         y="1"
+         width="1"
+         height="1"
+         id="rect211" />
+    </pattern>
+  </defs>
+  <g
+     inkscape:label="Transparent"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline">
+    <rect
+       style="display:inline;fill:url(#pattern2);stroke-width:0.264583"
+       id="checkerboard"
+       height="26.458332"
+       x="0"
+       y="0"
+       width="26.458332" />
+    <rect
+       style="display:inline;fill:#fe0000;fill-opacity:0.501863;stroke-width:0.264583"
+       id="swatch"
+       height="26.458332"
+       x="0"
+       y="0"
+       width="26.458332" />
+    <path
+       id="rect2"
+       style="display:inline;fill:#fe0000;stroke-width:0.51438"
+       d="M 0,0 H 26.458332 L 0,26.458332 Z"
+       inkscape:label="triangle" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Shiny">
+    <path
+       sodipodi:type="star"
+       style="display:none;fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
+       id="path1"
+       inkscape:flatsided="false"
+       sodipodi:sides="4"
+       sodipodi:cx="7.5770912"
+       sodipodi:cy="2.525697"
+       sodipodi:r1="15.248013"
+       sodipodi:r2="5.033318"
+       sodipodi:arg1="1.5769312"
+       sodipodi:arg2="2.3635547"
+       inkscape:rounded="0.09"
+       inkscape:randomized="0"
+       d="M 7.4835472,17.773423 C 6.383399,17.765325 4.765055,6.8411996 3.9918989,6.0584985 3.2194311,5.2764942 -7.6787248,3.5313215 -7.6706344,2.432153 c 0.0081,-1.1001482 10.932223,-2.71849221 11.7149241,-3.4916484 0.7820043,-0.7724677 2.527177,-11.6706236 3.6263456,-11.6625336 1.1001481,0.0081 2.7184917,10.9322233 3.4916487,11.7149245 0.772467,0.78200425 11.670623,2.527177 11.662533,3.6263455 C 22.816719,3.7193892 11.892594,5.3377332 11.109893,6.1108893 10.327888,6.8833571 8.5827158,17.781513 7.4835472,17.773423 Z"
+       transform="matrix(0.36331398,0,0,0.36331398,13.985579,8.7848156)" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
+       id="rect3"
+       width="52.916664"
+       height="2.6458333"
+       x="-3.7270603"
+       y="0.080248863"
+       transform="rotate(45)" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
+       id="rect3-1"
+       width="52.916664"
+       height="2.6458333"
+       x="-3.5413883"
+       y="-5.4388666"
+       transform="rotate(45)" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Opaque"
+     style="display:none">
+    <rect
+       style="display:inline;fill:#fe0000;fill-opacity:1;stroke-width:0.264583"
+       id="rect1"
+       height="26.458332"
+       x="0"
+       y="0"
+       width="26.458332"
+       inkscape:label="swatch" />
+  </g>
 </svg>
