@@ -1,6 +1,25 @@
 import {generateInfoBox} from "../Discord.js";
 import {ImageGenerator} from "../ImageGenerator.js";
 
+// TODO: We get colour data for LDraw but they don't seem to have a colour page on https://library.ldraw.org
+const colorLinks = {
+  "BrickLink": function (name, id) {
+    return `https://www.bricklink.com/catalogList.asp?catType=P&colorPart=${id}`;
+  },
+  "BrickOwl": function (name, id) {
+    return `https://www.brickowl.com/search/catalog?color=${id}&query=All`;
+  },
+  "LEGO": function (name, id) {
+    return `https://www.lego.com/en-gb/pick-and-build/pick-a-brick?color=${id}`;
+  },
+  "Peeron": function (name, id) {
+    return `http://www.peeron.com/cgi-bin/invcgis/psearch?query=${name}&limit=color2part`;
+  },
+  "Rebrickable": function (name, id) {
+    return `https://rebrickable.com/parts/?exists_in_color=${id}`;
+  },
+};
+
 export class Color {
   rgb;
   isTransparent;
@@ -54,11 +73,16 @@ export class Color {
     for (const siteName of sortedSiteNames) {
       const id = this.ids.get(siteName);
       const name = this.names.get(siteName);
-      if (id) {
-        description += `- ${siteName}: ${name} (ID ${id})\n`;
-      } else {
-        description += `- ${siteName}: ${name}\n`;
-      }
+      const makeUrl = colorLinks[siteName];
+      description += `- ${siteName}: `;
+      if (makeUrl)
+        description += '[';
+      description += name;
+      if (id)
+        description += ` (ID ${id})`;
+      if (makeUrl)
+        description += `](<${makeUrl(name, id)}>)`;
+      description += '\n';
     }
 
     const message = generateInfoBox(
