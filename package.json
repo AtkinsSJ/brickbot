@@ -6,12 +6,12 @@
   "main": "app.js",
   "type": "module",
   "engines": {
-    "node": ">=18.x"
+    "node": ">=22.9"
   },
   "scripts": {
-    "start": "node app.js",
-    "register": "node commands.js",
-    "dev": "nodemon app.js"
+    "start": "node --env-file-if-exists=.env app.js",
+    "register": "node --env-file-if-exists=.env commands.js",
+    "dev": "nodemon --env-file-if-exists=.env app.js"
   },
   "author": "Sam Atkins",
   "license": "MIT",
