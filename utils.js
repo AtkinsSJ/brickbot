@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import * as https from "node:https";
 
 export async function DiscordRequest(endpoint, options) {

@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import express from 'express';
 import {InteractionResponseType, InteractionType, verifyKeyMiddleware,} from 'discord-interactions';
 import {ThemeManager} from "./src/ThemeManager.js";
