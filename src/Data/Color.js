@@ -10,7 +10,7 @@ const colorLinks = {
     return `https://www.brickowl.com/search/catalog?color=${id}&query=All`;
   },
   "LEGO": function (name, id) {
-    return `https://www.lego.com/en-gb/pick-and-build/pick-a-brick?color=${id}`;
+    return `https://www.lego.com/pick-and-build/pick-a-brick?color=${id}`;
   },
   "Peeron": function (name, id) {
     return `http://www.peeron.com/cgi-bin/invcgis/psearch?query=${name}&limit=color2part`;
